@@ -18,14 +18,14 @@ void setup() {
 
 void loop() {
   dispenseFood();
-  delay(30 * 1000);
+  delay(2 * 60 * 1000);
 }
 
 void dispenseFood() {
   digitalWrite(MOTOR_POWER, HIGH);
   delay(1000);  // TESTING
   Serial.println("Rotating Clockwise...");
-  motor.step(steps_per_rev);
+  motor.step(2 * steps_per_rev);
   Serial.println("Done!");
   delay(1000);  // TESTING
   digitalWrite(MOTOR_POWER, LOW);

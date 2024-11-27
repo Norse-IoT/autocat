@@ -8,4 +8,6 @@ This uses a IRFZ44N N-Channel mosfet:
  - Drain: Goes to the negative line on the ULN2003AN
  - Source: Goes to the negative line for the 9V power supply 
 
+Important: make sure to include a ~10KΩ resistor between the gate and the source.
+
 ![PXL_20241127_030743353](https://github.com/user-attachments/assets/c9fa51be-bad1-4d0b-907f-0fe50c543f0a)
