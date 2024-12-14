@@ -1,32 +1,59 @@
-#include <Stepper.h>
+/*
+ * Created by ArduinoGetStarted.com
+ *
+ * This example code is in the public domain
+ *
+ * Tutorial page: https://arduinogetstarted.com/tutorials/arduino-ds1307-rtc-module
+ */
 
-const int steps_per_rev = 2048;
+#include <RTClib.h>
 
-const int IN1 = 26;
-const int IN2 = 25;
-const int IN3 = 33;
-const int IN4 = 32;
-const int MOTOR_POWER = 2;
+RTC_DS1307 rtc;
 
-Stepper motor(steps_per_rev, IN1, IN3, IN2, IN4);
+char daysOfTheWeek[7][12] = {
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+};
 
-void setup() {
-  pinMode(MOTOR_POWER, OUTPUT);
-  motor.setSpeed(10);
-  Serial.begin(115200);
+void setup () {
+  Serial.begin(9600);
+
+  // SETUP RTC MODULE
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    Serial.flush();
+    while (1);
+  }
+
+  // automatically sets the RTC to the date & time on PC this sketch was compiled
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+
+  // manually sets the RTC with an explicit date & time, for example to set
+  // January 21, 2021 at 3am you would call:
+  // rtc.adjust(DateTime(2021, 1, 21, 3, 0, 0));
 }
 
-void loop() {
-  dispenseFood();
-  delay(2 * 60 * 1000);
-}
+void loop () {
+  DateTime now = rtc.now();
+  Serial.print("Date & Time: ");
+  Serial.print(now.year(), DEC);
+  Serial.print('/');
+  Serial.print(now.month(), DEC);
+  Serial.print('/');
+  Serial.print(now.day(), DEC);
+  Serial.print(" (");
+  Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  Serial.print(") ");
+  Serial.print(now.hour(), DEC);
+  Serial.print(':');
+  Serial.print(now.minute(), DEC);
+  Serial.print(':');
+  Serial.println(now.second(), DEC);
 
-void dispenseFood() {
-  digitalWrite(MOTOR_POWER, HIGH);
-  delay(1000);  // TESTING
-  Serial.println("Rotating Clockwise...");
-  motor.step(2 * steps_per_rev);
-  Serial.println("Done!");
-  delay(1000);  // TESTING
-  digitalWrite(MOTOR_POWER, LOW);
+  delay(1000); // delay 1 seconds
 }
