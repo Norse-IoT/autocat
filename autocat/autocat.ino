@@ -14,16 +14,6 @@ const int relay_pin = 10;  // digital pin 10 on Arduino Nano
 
 RTC_DS1307 rtc;
 
-char daysOfTheWeek[7][12] = {
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday"
-};
-
 void setup() {
   pinMode(relay_pin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -43,27 +33,21 @@ void setup() {
   DateTime now = rtc.now();
   setTime(now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
 
-  // Set alarms
-  Alarm.alarmRepeat(22, 24, 0, turnOn);   // Daily at 14:30:00
-  Alarm.alarmRepeat(22, 25, 0, turnOff);  // Daily at 15:00:00
+  // Based on my measurements, 15 minutes on = 1 cup of food.
+  // This should use 2 cups of food per day.
+
+  // Morning (8am)
+  Alarm.alarmRepeat(8, 0, 0, turnOn);
+  Alarm.alarmRepeat(8, 15, 0, turnOff);
+
+  // Evening (5pm)
+  Alarm.alarmRepeat(17, 0, 0, turnOn);
+  Alarm.alarmRepeat(17, 15, 0, turnOff);
 }
 
 void loop() {
   DateTime now = rtc.now();
-  Serial.print("Date & Time: ");
-  Serial.print(now.year(), DEC);
-  Serial.print('/');
-  Serial.print(now.month(), DEC);
-  Serial.print('/');
-  Serial.print(now.day(), DEC);
-  Serial.print(" (");
-  Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-  Serial.print(") ");
-  Serial.print(now.hour(), DEC);
-  Serial.print(':');
-  Serial.print(now.minute(), DEC);
-  Serial.print(':');
-  Serial.println(now.second(), DEC);
+  setTime(now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
 
   Alarm.delay(100);  // check & trigger alarms
 }
