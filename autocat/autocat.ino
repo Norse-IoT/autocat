@@ -26,8 +26,9 @@ void setup() {
     while (1)
       ;
   }
-  // set rtc to compile time
-  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // set rtc to compile time.
+  // Note that this line should be used once, then removed, lest the RTC chip be overwritten if the Arduino loses power.
+  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
   // Set initial time for TimeAlarms
   DateTime now = rtc.now();
@@ -53,9 +54,11 @@ void loop() {
 }
 
 void turnOn() {
+  digitalWrite(LED_BUILTIN, HIGH);
   digitalWrite(relay_pin, HIGH);
 }
 
 void turnOff() {
+  digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(relay_pin, LOW);
 }
