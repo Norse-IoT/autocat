@@ -7,6 +7,10 @@
  */
 
 #include <RTClib.h>
+#include <TimeAlarms.h>  // needs TimeAlarms@1.5 by Michael Margolis
+// depends on Time@1.6.1 by Michael Margolis
+
+const int relay_pin = 10;  // digital pin 10 on Arduino Nano
 
 RTC_DS1307 rtc;
 
@@ -20,25 +24,31 @@ char daysOfTheWeek[7][12] = {
   "Saturday"
 };
 
-void setup () {
+void setup() {
+  pinMode(relay_pin, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
 
   // SETUP RTC MODULE
-  if (! rtc.begin()) {
+  if (!rtc.begin()) {
     Serial.println("Couldn't find RTC");
     Serial.flush();
-    while (1);
+    while (1)
+      ;
   }
-
-  // automatically sets the RTC to the date & time on PC this sketch was compiled
+  // set rtc to compile time
   rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
-  // manually sets the RTC with an explicit date & time, for example to set
-  // January 21, 2021 at 3am you would call:
-  // rtc.adjust(DateTime(2021, 1, 21, 3, 0, 0));
+  // Set initial time for TimeAlarms
+  DateTime now = rtc.now();
+  setTime(now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
+
+  // Set alarms
+  Alarm.alarmRepeat(22, 24, 0, turnOn);   // Daily at 14:30:00
+  Alarm.alarmRepeat(22, 25, 0, turnOff);  // Daily at 15:00:00
 }
 
-void loop () {
+void loop() {
   DateTime now = rtc.now();
   Serial.print("Date & Time: ");
   Serial.print(now.year(), DEC);
@@ -55,5 +65,13 @@ void loop () {
   Serial.print(':');
   Serial.println(now.second(), DEC);
 
-  delay(1000); // delay 1 seconds
+  Alarm.delay(100);  // check & trigger alarms
+}
+
+void turnOn() {
+  digitalWrite(relay_pin, HIGH);
+}
+
+void turnOff() {
+  digitalWrite(relay_pin, LOW);
 }
