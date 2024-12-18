@@ -2,6 +2,7 @@
 # https://gist.githubusercontent.com/olasd/9841772/raw/12c78a9426af9102e7c3fe40652c96f3c793aa9d/stream_to_youtube.sh
 #
 # Diffusion youtube avec ffmpeg
+# THIS DOESN'T WORK FOR SOME REASON
 
 VBR="2500k"
 FPS="30"
