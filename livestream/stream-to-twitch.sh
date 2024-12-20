@@ -12,11 +12,11 @@ function startVLCForSomeReason() (
 function realSignal() {
         echo "starting VLC for some godforsaken reason"
         startVLCForSomeReason &
-        echo "sleeping for 15 seconds..."
-        sleep 15
+        echo "sleeping for 60 seconds..."
+        sleep 60
         echo "killing vlc"
-        echo "transmit to twitch"
         pkill vlc
+        echo "transmit to twitch"
         ffmpeg -re -f v4l2 -i /dev/video0 -f v4l2 \
                 -c:v libx264 -preset veryfast -b:v 6000k \
                 -maxrate 6000k -bufsize 6000k -pix_fmt yuv420p \
