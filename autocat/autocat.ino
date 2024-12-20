@@ -39,11 +39,13 @@ void setup() {
 
   // Morning (8am)
   Alarm.alarmRepeat(8, 0, 0, turnOn);
-  Alarm.alarmRepeat(8, 15, 0, turnOff);
+  Alarm.alarmRepeat(8, 10, 0, turnOff);
 
   // Evening (5pm)
   Alarm.alarmRepeat(17, 0, 0, turnOn);
-  Alarm.alarmRepeat(17, 15, 0, turnOff);
+  Alarm.alarmRepeat(17, 10, 0, turnOff);
+
+  testMotor();
 }
 
 void loop() {
@@ -61,4 +63,10 @@ void turnOn() {
 void turnOff() {
   digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(relay_pin, LOW);
+}
+
+void testMotor() {
+  turnOn();
+  delay(10 * 1000);  // 10 seconds
+  turnOff();
 }
