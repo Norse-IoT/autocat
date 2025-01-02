@@ -34,14 +34,14 @@ void setup() {
   DateTime now = rtc.now();
   setTime(now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
 
-  // Based on my measurements, 15 minutes on = 1 cup of food.
-  // This should use 2 cups of food per day.
+  // Based on my measurements, 10 minutes on = 1 cup of food.
+  // This should use 3 cups of food per day.
 
-  // Morning (8am)
+  // Morning (8am) - 2 cups
   Alarm.alarmRepeat(8, 0, 0, turnOn);
-  Alarm.alarmRepeat(8, 10, 0, turnOff);
+  Alarm.alarmRepeat(8, 20, 0, turnOff);
 
-  // Evening (5pm)
+  // Evening (5pm) - 1 cup
   Alarm.alarmRepeat(17, 0, 0, turnOn);
   Alarm.alarmRepeat(17, 10, 0, turnOff);
 
