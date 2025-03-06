@@ -7,12 +7,22 @@
  */
 
 #include <RTClib.h>
-#include <TimeAlarms.h>  // needs TimeAlarms@1.5 by Michael Margolis
+// #include <TimeAlarms.h>  // needs TimeAlarms@1.5 by Michael Margolis
 // depends on Time@1.6.1 by Michael Margolis
 
 const int relay_pin = 10;  // digital pin 10 on Arduino Nano
 
 RTC_DS1307 rtc;
+
+char daysOfTheWeek[7][12] = {
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+};
 
 void setup() {
   pinMode(relay_pin, OUTPUT);
@@ -30,37 +40,54 @@ void setup() {
   // Note that this line should be used once, then removed, lest the RTC chip be overwritten if the Arduino loses power.
   // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
-  // Set initial time for TimeAlarms
-  DateTime now = rtc.now();
-  setTime(now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
-
-  // Based on my measurements, 10 minutes on = 1 cup of food.
-  // This should use 3 cups of food per day.
-
-  // Morning (8am) - 2 cups
-  Alarm.alarmRepeat(8, 0, 0, turnOn);
-  Alarm.alarmRepeat(8, 20, 0, turnOff);
-
-  // Evening (5pm) - 1 cup
-  Alarm.alarmRepeat(17, 0, 0, turnOn);
-  Alarm.alarmRepeat(17, 10, 0, turnOff);
-
   testMotor();
+}
+
+void printTime() {
+  DateTime now = rtc.now();
+  Serial.print("Date & Time: ");
+  Serial.print(now.year(), DEC);
+  Serial.print('/');
+  Serial.print(now.month(), DEC);
+  Serial.print('/');
+  Serial.print(now.day(), DEC);
+  Serial.print(" (");
+  Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  Serial.print(") ");
+  Serial.print(now.hour(), DEC);
+  Serial.print(':');
+  Serial.print(now.minute(), DEC);
+  Serial.print(':');
+  Serial.println(now.second(), DEC);
 }
 
 void loop() {
   DateTime now = rtc.now();
-  setTime(now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
 
-  Alarm.delay(100);  // check & trigger alarms
+  // Based on my measurements, 10 minutes on = 1 cup of food.
+  // This should use 3 cups of food per day.
+
+  if (now.hour() == 8 && now.minute() >= 0 && now.minute() < 10) {
+    // Morning (8am) - 2 cups
+    turnOn();
+  } else if (now.hour() == 17 && now.minute() >= 0 && now.minute() < 10) {
+    // Evening (5pm) - 1 cup
+    turnOn();
+  } else {
+    turnOff();
+  }
+
+  printTime();
 }
 
 void turnOn() {
+  Serial.println("ON!");
   digitalWrite(LED_BUILTIN, HIGH);
   digitalWrite(relay_pin, HIGH);
 }
 
 void turnOff() {
+  Serial.println("OFF!");
   digitalWrite(LED_BUILTIN, LOW);
   digitalWrite(relay_pin, LOW);
 }
